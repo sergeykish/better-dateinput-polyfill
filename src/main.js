@@ -234,7 +234,7 @@
         _focusCalendar(calendar) {
             // update calendar weekday captions
             calendar.findAll("th").forEach((el, index) => {
-                el.l10n(DateUtils.DAYS[ampm(index, ++index % 7)].slice(0, 2));
+                el.value(`<span data-l10n="_">${DateUtils.DAYS[ampm(index, ++index % 7)].slice(0, 2)}</span>`)
             });
 
             calendar.show();
