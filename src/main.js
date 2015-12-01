@@ -1,8 +1,7 @@
 (function(DOM, BASE_CLASS, VK_SPACE, VK_TAB, VK_ENTER, VK_ESCAPE, VK_BACKSPACE, VK_DELETE, DateUtils, testDateInput) {
     "use strict";
 
-    var __ = DOM.__,
-        ampm = (pos, neg) => DOM.get("lang") === "en-US" ? pos : neg,
+    var ampm = (pos, neg) => DOM.get("lang") === "en-US" ? pos : neg,
         formatISODate = (value) => value.toISOString().split("T")[0],
         PICKER_HTML  = '<div class="btr-dateinput-calendar"><p class="btr-dateinput-calendar-header"><a unselectable="on"></a><a unselectable="on"></a><span aria-hidden="true" unselectable="on" class="btr-dateinput-calendar-caption"></span></p><table aria-hidden="true" class="btr-dateinput-calendar-days"><thead><tr><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th></tr></thead><tbody class="btr-dateinput-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><tbody class="btr-dateinput-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>',
         LABEL_HTML = '<span aria-hidden="true" class="btr-dateinput-value"></span>',
@@ -146,40 +145,10 @@
                 formattedValue = "";
 
             if (value.getTime()) {
-                var formatString = this.get("data-format");
-                // use "E, dd MMM yyyy" as default value
-                if (!formatString) formatString = "E, dd MMM yyyy";
-
-                var day = value.getUTCDay();
                 var date = value.getUTCDate();
                 var month = value.getUTCMonth();
                 var year = value.getUTCFullYear();
-
-                formatString = formatString
-                        .replace(/'([^']+)'/g, "->$1<-")
-                        .replace(/\w+/g, "{$&}")
-                        .replace(/->{(.*?)}<-/g, (_, group) => group.replace(/}|{/g, ""));
-
-                formattedValue = DOM.format(formatString, {
-                    E: __(DateUtils.DAYS[day].slice(0, 2)).toHTMLString(),
-                    EE: __(DateUtils.DAYS[day]).toHTMLString(),
-                    d: date,
-                    dd: pad(date, 2),
-                    D: DateUtils.getDayInYear(value),
-                    DD: pad(DateUtils.getDayInYear(value), 3),
-                    w: DateUtils.getWeekInYear(value),
-                    ww: pad(DateUtils.getWeekInYear(value), 2),
-                    W: DateUtils.getWeekInMonth(value),
-                    M: month + 1,
-                    MM: pad(month + 1, 2),
-                    MMM: __(DateUtils.MONTHS[month].substr(0, 3) + ".").toHTMLString(),
-                    MMMM: __(DateUtils.MONTHS[month]).toHTMLString(),
-                    y: year % 100,
-                    yy: pad(year % 100, 2),
-                    yyyy: year,
-                    u: day || 7,
-                    F: DateUtils.getWeekCountInMonth(value)
-                });
+                formattedValue = `${pad(month + 1, 2)}/${pad(date, 2)}/${year}`
             }
 
             // display formatted date value instead of real one
@@ -291,40 +260,9 @@
             this.value(this.get("defaultValue"));
         }
     });
-
-    // compact moths in english don't have the dot suffix
-    DOM.importStrings("en", DateUtils.MONTHS.reduce((memo, month) => {
-        var shortMonth = month.slice(0, 3);
-
-        memo[shortMonth + "."] = shortMonth;
-
-        return memo;
-    }, {}));
 }(window.DOM, "btr-dateinput", 32, 9, 13, 27, 8, 46, {
     DAYS: "Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" "),
     MONTHS: "January February March April May June July August September October November December".split(" "),
-    getWeekInYear(d) {
-        d = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-        // set to nearest thursday: current date + 4 - current day number
-        // make sunday's day number 7
-        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-        var yearStart = Date.UTC(d.getUTCFullYear(), 0, 1);
-        // calculate full weeks to nearest thursday
-        return Math.ceil((1 + (d - yearStart) / 86400000) / 7);
-    },
-    getWeekInMonth(d) {
-        var firstWeekday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)).getUTCDay();
-        var offsetDate = d.getUTCDate() + firstWeekday - 1;
-        return 1 + Math.floor(offsetDate / 7);
-    },
-    getWeekCountInMonth(d) {
-        return Math.ceil(d.getUTCDate() / 7);
-    },
-    getDayInYear(d) {
-        var beginOfYear = Date.UTC(d.getUTCFullYear(), 0, 1);
-        var millisBetween = d.getTime() - beginOfYear;
-        return Math.floor(1 + millisBetween / 86400000);
-    }
 }, (el) => {
     var nativeValue = el.get("_native"),
         deviceType = "orientation" in window ? "mobile" : "desktop";
