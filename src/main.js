@@ -45,8 +45,7 @@
             changeValue(this.value());
 
             calendar.on("mousedown", ["target"], this._clickCalendar.bind(this, calendar));
-            // FIXME: get rid of DOM.requestFrame which is required to get right offset
-            DOM.requestFrame(() => {
+            window.requestAnimationFrame(() => {
                 var offset = this.offset();
                 var labelOffset = label.offset();
 
