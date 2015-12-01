@@ -4,16 +4,21 @@
     var __ = DOM.__,
         ampm = (pos, neg) => DOM.get("lang") === "en-US" ? pos : neg,
         formatISODate = (value) => value.toISOString().split("T")[0],
-        PICKER_TEMPLATE = DOM.create("div.{0}>p.{0}-header>a[{1}]*2+span[{2} {1}].{0}-caption^table[{2}].{0}-days>thead>(tr>th[{1}]*7)^(tbody.{0}-body*2>tr*6>td*7)", [`${BASE_CLASS}-calendar`, "unselectable=on", "aria-hidden=true"]),
-        LABEL_TEMPLATE = DOM.create("span[aria-hidden=true].{0}-value", [BASE_CLASS]),
+        PICKER_HTML  = '<div class="btr-dateinput-calendar"><p class="btr-dateinput-calendar-header"><a unselectable="on"></a><a unselectable="on"></a><span aria-hidden="true" unselectable="on" class="btr-dateinput-calendar-caption"></span></p><table aria-hidden="true" class="btr-dateinput-calendar-days"><thead><tr><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th></tr></thead><tbody class="btr-dateinput-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><tbody class="btr-dateinput-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>',
+        LABEL_HTML = '<span aria-hidden="true" class="btr-dateinput-value"></span>',
         readDateRange = (el) => ["min", "max"].map((x) => new Date(el.get(x) || "")),
         pad = (num, maxlen) => ((maxlen === 2 ? "0" : "00") + num).slice(-maxlen);
 
     // need to skip mobile/tablet browsers
     DOM.extend("input[type=date]", testDateInput, {
         constructor() {
-            var calendar = PICKER_TEMPLATE.clone(true),
-                label = LABEL_TEMPLATE.clone(true),
+            var range = document.createRange()
+            range.selectNode(this[0])
+
+            var PICKER_FRAGMENT = range.createContextualFragment(PICKER_HTML),
+                LABEL_FRAGMENT = range.createContextualFragment(LABEL_HTML),
+                calendar = DOM.constructor(PICKER_FRAGMENT.firstElementChild),
+                label = DOM.constructor(LABEL_FRAGMENT.firstElementChild),
                 color = this.css("color");
 
             this
@@ -86,7 +91,7 @@
             date = value.getUTCDate();
             year = value.getUTCFullYear();
             // update calendar caption
-            caption.set(__(DateUtils.MONTHS[month]).toHTMLString() + " " + year);
+            caption.set(`<span><span data-l10n="_">${DateUtils.MONTHS[month]}</span></span> ${year}`);
             // update calendar content
             iterDate = new Date(Date.UTC(year, month, 0));
             // move to beginning of current month week
