@@ -3,7 +3,7 @@
 
     var ampm = function(pos, neg)  {return document.documentElement.getAttribute('lang') === "en-US" ? pos : neg},
         formatISODate = (value) => value.toISOString().split("T")[0],
-        PICKER_HTML  = `<div class="${BASE_CLASS}-calendar"><p class="${BASE_CLASS}-calendar-header"><a unselectable="on"></a><a unselectable="on"></a><span aria-hidden="true" unselectable="on" class="${BASE_CLASS}-calendar-caption"></span></p><table aria-hidden="true" class="${BASE_CLASS}-calendar-days"><thead><tr><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th></tr></thead><tbody class="${BASE_CLASS}-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody><tbody class="${BASE_CLASS}-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`,
+        PICKER_HTML  = `<div class="${BASE_CLASS}-calendar"><p class="${BASE_CLASS}-calendar-header"><a unselectable="on"></a><a unselectable="on"></a><span aria-hidden="true" unselectable="on" class="${BASE_CLASS}-calendar-caption"></span></p><table aria-hidden="true" class="${BASE_CLASS}-calendar-days"><thead><tr><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th><th unselectable="on"></th></tr></thead><tbody class="${BASE_CLASS}-calendar-body"><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`,
         LABEL_HTML = `<span aria-hidden="true" class="${BASE_CLASS}-value"></span>`,
         readDateRange = (el) => ["min", "max"].map((x) => new Date(el.get(x) || "")),
         pad = (num, maxlen) => ((maxlen === 2 ? "0" : "00") + num).slice(-maxlen);
@@ -40,8 +40,6 @@
             var calenderDays = calendar.findAll(`.${BASE_CLASS}-calendar-body`),
                 calendarCaption = calendar.find(`.${BASE_CLASS}-calendar-caption`),
                 changeValue = this._changeValue.bind(this, calendarCaption, calenderDays, calendar);
-
-            calenderDays[1].hide().remove();
 
             this.closest("form").on("reset", this._resetForm.bind(this));
             this.watch("value", changeValue);
