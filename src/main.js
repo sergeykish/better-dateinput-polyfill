@@ -8,9 +8,10 @@
         readDateRange = (el) => ["min", "max"].map((x) => new Date(el.get(x) || "")),
         pad = (num, maxlen) => ((maxlen === 2 ? "0" : "00") + num).slice(-maxlen);
 
-    // need to skip mobile/tablet browsers
-    DOM.extend("input[type=date]", testDateInput, {
+    DOM.extend("input[type=date]", true, {
         constructor() {
+            if (!testDateInput(this)) return
+
             var range = document.createRange()
             range.selectNode(this[0])
 
