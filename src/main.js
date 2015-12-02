@@ -23,8 +23,7 @@
 
             this
                 // hide original input text
-                // IE8 doesn't suport color:transparent - use background-color instead
-                .css("color", document.addEventListener ? "transparent" : this.css("background-color"))
+                .css("color", "transparent")
                 // handle arrow keys, esc etc.
                 .on("keydown", ["which", "shiftKey"], _keydownCalendar.bind(this, calendar))
                 // sync picker visibility on focus/blur
